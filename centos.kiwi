@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<image name="centos-9-qcow2">
+    <description type="system">
+        <author>Vipin</author>
+        <contact>vipin@example.com</contact>
+        <specification>CentOS Stream 9 QCOW2 built on Ubuntu</specification>
+    </description>
+
+    <preferences>
+        <version>1.0.0</version>
+        <packagemanager>dnf</packagemanager>
+        <type image="vmx" filesystem="xfs" format="qcow2" bootloader="grub2">
+	    <partitions>
+            	<partition name="p1" mountpoint="/boot" size="512M"/>
+            	<partition name="p2" mountpoint="swap" size="2G"/>
+		<partition name="p3" mountpoint="/" size="1G"/>
+            </partitions>
+        </type>
+    </preferences>
+
+    <repository type="rpm-md" alias="baseos">
+        <source path="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/"/>
+    </repository>
+    <repository type="rpm-md" alias="appstream">
+        <source path="https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/"/>
+    </repository>
+    <packages type="bootstrap">
+    	<package name="dnf"/>
+    	<package name="rpm"/>
+    	<package name="basesystem"/>
+    </packages>
+
+    <packages type="image">
+	<package name="dracut-config-generic"/>
+        <package name="kernel"/>
+        <package name="grub2-pc"/>
+        <package name="grub2-tools"/>
+        <package name="basesystem"/>
+        <package name="openssh-server"/>
+        <package name="cloud-init"/>
+	<package name="cloud-utils-growpart"/><package name="gdisk"/>
+    </packages>
+</image>
