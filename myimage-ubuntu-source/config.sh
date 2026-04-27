@@ -1,21 +1,21 @@
 #!/bin/bash
 set -e
 
-echo "NPCI DevOps: Staging EFI binaries..."
+# 1. Force GRUB to use the unified 'linux' and 'initrd' commands
+# This is the industry-standard fix for Ubuntu 24.04 cloud images
+echo 'GRUB_DISABLE_LINUX_EFI_COMMANDS="true"' >> /etc/default/grub
 
-# 1. Create the standard directory structure
-mkdir -p /boot/efi/EFI/BOOT
+# 2. Patch the existing variable definitions in the generated config
+# Sometimes update-grub still misses these in a chroot environment
+if [ -f /boot/grub/grub.cfg ]; then
+    sed -i 's/set linux="linuxefi"/set linux="linux"/g' /boot/grub/grub.cfg
+    sed -i 's/set initrd="initrdefi"/set initrd="initrd"/g' /boot/grub/grub.cfg
+    # Also handle the direct commands just in case
+    sed -i 's/linuxefi/linux/g' /boot/grub/grub.cfg
+    sed -i 's/initrdefi/initrd/g' /boot/grub/grub.cfg
+fi
 
-# 2. Copy the binaries that were just downloaded/installed via apt
-# These are the actual 'real' files that were missing before
-cp /usr/lib/shim/shimx64.efi.signed /boot/efi/EFI/BOOT/BOOTX64.EFI
-cp /usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed /boot/efi/EFI/BOOT/grubx64.efi
+# 3. Regenerate to seal the deal
+update-grub
 
-# 3. Create the EFI-level grub.cfg stub
-cat <<EOF > /boot/efi/EFI/BOOT/grub.cfg
-search --no-floppy --file --set=root /boot/grub/grub.cfg
-set prefix=(\$root)/boot/grub
-configfile (\$root)/boot/grub/grub.cfg
-EOF
-
-echo "Staging complete."
+exit 0
