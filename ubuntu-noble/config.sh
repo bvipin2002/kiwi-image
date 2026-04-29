@@ -46,6 +46,13 @@ echo "UTC" >> /etc/adjtime
 #--------------------------------------
 baseRemoveService systemd-timesyncd
 
+#=====================================
+#Setup nameserver
+#-------------------------------------
+
+echo "nameserver 10.255.255.254" > /etc/resolv.conf
+
+
 #======================================
 # Enable firstboot resolv.conf setting
 #--------------------------------------

@@ -1,0 +1,19 @@
+stages:
+  - build
+
+build_kiwi_image:
+  stage: build
+  image: ubuntu:24.04
+  tags:
+    - kiwi  # Ensure your runner uses the docker executor1
+  variables:
+    # KIWI needs to run as root and requires some kernel capabilities
+  script:
+    - mkdir -p output
+    # Replace 'path/to/description' with the folder containing your config.xml
+    - sudo kiwi-ng --debug --profile Virtual system build --description ./my_description --target-dir ./output
+  artifacts:
+    paths:
+      - output/*.raw
+      - output/*.md5
+    expire_in: 1 week
