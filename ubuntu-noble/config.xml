@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <image schemaversion="7.6" name="Ubuntu-24.04_appliance">
     <description type="system">
-        <author>Marcus Schaefer</author>
-        <contact>ms@suse.com</contact>
+        <author>Vipin</author>
+        <contact>Vipin</contact>
         <specification>Image description for Ubuntu 24.04</specification>
     </description>
     <profiles>
-        <profile name="Live" description="Live image" import="true"/>
         <profile name="Virtual" description="Simple Disk image"/>
-        <profile name="Disk" description="Expandable Disk image"/>
     </profiles>
     <include from="this://include/packages.xml"/>
+    <include from="this://include/repos.xml"/>
     <preferences>
         <version>1.16.4</version>
         <packagemanager>apt</packagemanager>
@@ -21,9 +19,6 @@
         <timezone>UTC</timezone>
         <rpm-check-signatures>false</rpm-check-signatures>
     </preferences>
-    <preferences profiles="Live">
-        <type image="iso" flags="overlay" hybridpersistent_filesystem="ext4" hybridpersistent="true" firmware="efi"/>
-    </preferences>
     <preferences profiles="Virtual">
         <type image="oem" filesystem="ext4" kernelcmdline="console=ttyS0" firmware="uefi">
           <systemdisk>
@@ -31,44 +26,15 @@
             <volume name="home" size="1024" mountpoint="/home"/>
             <volume name="var" size="2024" mountpoint="/var"/>
             <volume name="tmp" size="2024" mountpoint="/tmp"/>
-
-        </systemdisk>
-            <oemconfig>
-                <oem-resize>false</oem-resize>
-            </oemconfig>
-            <bootloader name="grub2"/>
-        </type>
-    </preferences>
-    <preferences profiles="Disk">
-        <type image="oem" filesystem="ext4" initrd_system="dracut" firmware="efi" installiso="true">
-            <oemconfig>
-                <oem-swap>true</oem-swap>
-                <oem-device-filter>/dev/ram</oem-device-filter>
-                <oem-multipath-scan>false</oem-multipath-scan>
-            </oemconfig>
+          </systemdisk>
+          <oemconfig>
+            <oem-resize>false</oem-resize>
+          </oemconfig>
+          <bootloader name="grub2"/>
         </type>
     </preferences>
     <users>
         <user password="$1$kDTPKVeQ$L2PdoK/U1w1/p.R.XtJeH1" home="/root" name="root" groups="root"/>
     </users>
-   <!-- Base Repository (KIWI uses this for debootstrap scripts) -->
-<repository type="apt-deb" alias="Noble-Base" distribution="noble" components="main multiverse restricted universe" repository_gpgcheck="false">
-    <source path="http://in.archive.ubuntu.com/ubuntu/"/>
-</repository>
-
-<repository type="apt-deb" repository_gpgcheck="false" package_gpgcheck="false" imageinclude="true">
-    <source path="obs://Virtualization:Appliances:Builder/xUbuntu_24.04_x86_64"/>
-</repository>
-
-<!-- Updates Repository 
-<repository type="apt-deb" alias="Noble-Updates" distribution="noble-updates" components="main multiverse restricted universe" repository_gpgcheck="false">
-    <source path="http://in.archive.ubuntu.com/ubuntu/"/>
-</repository>
--->
-<!-- Security Repository 
-<repository type="apt-deb" alias="Noble-Security" distribution="noble-security" components="main multiverse restricted universe" repository_gpgcheck="false">
-    <source path="http://security.ubuntu.com/ubuntu"/>
-</repository> 
--->	
 
 </image>
