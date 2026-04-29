@@ -26,14 +26,12 @@
     </preferences>
     <preferences profiles="Virtual">
         <type image="oem" filesystem="ext4" kernelcmdline="console=ttyS0" firmware="uefi">
-		<!--
-	<partitions>
-          <partition name="home_part" size="1024" mountpoint="/home" filesystem="ext4"/>
-  </partitions>
-		-->
           <systemdisk>
-            <volume name="root" size="10240"/>
+            <volume name="root" size="5000"/>
             <volume name="home" size="1024" mountpoint="/home"/>
+            <volume name="var" size="2024" mountpoint="/var"/>
+            <volume name="tmp" size="2024" mountpoint="/tmp"/>
+
         </systemdisk>
             <oemconfig>
                 <oem-resize>false</oem-resize>
