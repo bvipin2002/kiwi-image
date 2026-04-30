@@ -1,0 +1,10 @@
+<image>
+   <!-- Base Repository (KIWI uses this for debootstrap scripts) -->
+   <repository type="apt-deb" alias="Noble-Base" distribution="noble" components="main multiverse restricted universe" repository_gpgcheck="false">
+      <source path="http://in.archive.ubuntu.com/ubuntu/"/>
+   </repository>
+
+   <repository type="apt-deb" repository_gpgcheck="false" package_gpgcheck="false" imageinclude="true">
+      <source path="obs://Virtualization:Appliances:Builder/xUbuntu_24.04_x86_64"/>
+   </repository>
+</image>

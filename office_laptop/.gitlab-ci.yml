@@ -1,0 +1,50 @@
+stages:
+  - build
+  - scan
+
+build_kiwi_image:
+  stage: build
+  image: ubuntu:24.04
+  
+  tags:
+    - kiwi  # Ensure your runner uses the docker executor11
+  variables:
+    # KIWI needs to run as root and requires some kernel capabilities
+  script:
+    - mkdir -p output
+    # Replace ' path/to/description' with the folder containing your config.xml
+    - sudo kiwi-ng system build --description ./my_description --target-dir ./output
+    - RAW_FILE=$(ls output/*.raw)
+    - sudo qemu-img convert -f raw -O qcow2 "$RAW_FILE" "${RAW_FILE%.raw}.qcow2"
+    after_script: 
+    - sudo chown -R $(whoami):$(whoami) output/
+
+cis_compliance_scan:
+  stage: scan
+  image: ubuntu:24.04
+  tags:
+    - kiwi  # Ensure your runner uses the docker executor1
+  variables:
+    MOUNT_DIR: "/mnt/image"
+    # Set backend to direct to run inside a container without libvirt
+    LIBGUESTFS_BACKEND: "direct"
+  script:
+    - mkdir -p ${MOUNT_DIR}
+    - mkdir -p output
+    - QCOW2_FILE=$(ls output/*.qcow2)
+    # Mount the image as read-only
+    - sudo guestmount -a "$QCOW2_FILE" -i --ro ${MOUNT_DIR}
+    # Run the scan using the Ubuntu 24.04 data stream
+    - >
+      sudo oscap-chroot ${MOUNT_DIR} xccdf eval
+      --profile xccdf_org.ssgproject.content_profile_cis_level2_server
+      --results output/oscap-results.xml
+      --report output/oscap-report.html
+      /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
+  after_script:
+    - sudo guestunmount ${MOUNT_DIR} || true
+  artifacts:
+    paths:
+      - output/oscap-report.html
+      - output/oscap-results.xml
+    expire_in: 1 week

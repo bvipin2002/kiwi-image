@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<image schemaversion="7.6" name="Ubuntu-24.04_appliance">
+    <description type="system">
+        <author>Vipin</author>
+        <contact>Vipin</contact>
+        <specification>Image description for Ubuntu 24.04</specification>
+    </description>
+    <!--
+    <profiles>
+        <profile name="Virtual" description="Simple Disk image"/>
+    </profiles>
+    -->
+    <include from="this://include/packages.xml"/>
+    <include from="this://include/repos.xml"/>
+    <preferences>
+        <version>1.16.4</version>
+        <packagemanager>apt</packagemanager>
+        <bootsplash-theme>sabily</bootsplash-theme>
+        <bootloader-theme>ubuntu-mate</bootloader-theme>
+        <locale>en_US</locale>
+        <timezone>UTC</timezone>
+        <rpm-check-signatures>false</rpm-check-signatures>
+    </preferences>
+    <preferences>
+        <type image="oem" filesystem="xfs" kernelcmdline="console=ttyS0" firmware="uefi">
+          <systemdisk>
+            <volume name="root" size="5000"/>
+            <volume name="home" size="1024" mountpoint="/home"/>
+            <volume name="var" size="2024" mountpoint="/var"/>
+            <volume name="tmp" size="2024" mountpoint="/tmp"/>
+          </systemdisk>
+          <oemconfig>
+            <oem-resize>false</oem-resize>
+          </oemconfig>
+          <bootloader name="grub2"/>
+        </type>
+    </preferences>
+    <users>
+        <user password="$1$kDTPKVeQ$L2PdoK/U1w1/p.R.XtJeH1" home="/root" name="root" groups="root"/>
+    </users>
+
+</image>
